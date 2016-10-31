@@ -125,6 +125,7 @@ function buildAdUrl(
     };
   }
   const slotRect = a4a.getIntersectionElementLayoutBox();
+  const screen = global.screen;
   const viewportRect = a4a.getViewport().getRect();
   const iframeDepth = iframeNestingDepth(global);
   const browserViewPortSize = browserViewportSize(global);
@@ -136,16 +137,25 @@ function buildAdUrl(
         value: AmpAdImplementation.AMP_AD_XHR_TO_IFRAME_OR_AMP,
       },
       {name: 'amp_v', value: '$internalRuntimeVersion$'},
+      {name: 'd_imp', value: '1'},
       {name: 'dt', value: startTime},
+      {name: 'ifi', value: slotNumber},
       {name: 'adk', value: adKey(slotNumber, slotRect, viewportRect)},
       {name: 'c', value: makeCorrelator(clientId, documentInfo.pageViewId)},
       {name: 'output', value: 'html'},
       {name: 'nhd', value: iframeDepth},
+      {name: 'iu', value: a4a.element.getAttribute('data-ad-slot')},
       {name: 'eid', value: a4a.element.getAttribute('data-experiment-id')},
       {name: 'bih', value: viewportRect.height},
       {name: 'biw', value: viewportRect.width},
       {name: 'adx', value: slotRect.left},
       {name: 'ady', value: slotRect.top},
+      {name: 'u_ah', value: screen ? screen.availHeight : null},
+      {name: 'u_aw', value: screen ? screen.availWidth : null},
+      {name: 'u_cd', value: screen ? screen.colorDepth : null},
+      {name: 'u_w', value: screen ? screen.width : null},
+      {name: 'u_h', value: screen ? screen.height : null},
+      {name: 'u_tz', value: -new Date().getTimezoneOffset()},
       {name: 'u_his', value: getHistoryLength(global)},
       {name: 'brdim', value: additionalDimensions(global)},
       {name: 'isw', value: browserViewPortSize.width},
