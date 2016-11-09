@@ -64,19 +64,18 @@ export function isGoogleAdsA4AValidEnvironment(win, element) {
  * @param {!../../../extensions/amp-a4a/0.1/amp-a4a.AmpA4A} a4a
  * @param {string} baseUrl
  * @param {number} startTime
- * @param {number} slotNumber
  * @param {!Array<!./url-builder.QueryParameterDef>} queryParams
  * @param {!Array<!./url-builder.QueryParameterDef>} unboundedQueryParams
  * @return {!Promise<string>}
  */
 export function googleAdUrl(
-    a4a, baseUrl, startTime, slotNumber, queryParams, unboundedQueryParams) {
+    a4a, baseUrl, startTime, queryParams, unboundedQueryParams) {
   /** @const {!Promise<string>} */
   const referrerPromise = viewerForDoc(a4a.getAmpDoc()).getReferrerUrl();
   return getAdCid(a4a).then(clientId => referrerPromise.then(referrer =>
       buildAdUrl(
-          a4a, baseUrl, startTime, slotNumber, queryParams,
-          unboundedQueryParams, clientId, referrer)));
+        a4a, baseUrl, startTime, queryParams, unboundedQueryParams, clientId,
+        referrer)));
 }
 
 
@@ -105,7 +104,6 @@ export function extractGoogleAdCreativeAndSignature(
  * @param {!../../../extensions/amp-a4a/0.1/amp-a4a.AmpA4A} a4a
  * @param {string} baseUrl
  * @param {number} startTime
- * @param {number} slotNumber
  * @param {!Array<!./url-builder.QueryParameterDef>} queryParams
  * @param {!Array<!./url-builder.QueryParameterDef>} unboundedQueryParams
  * @param {(string|undefined)} clientId
@@ -113,8 +111,10 @@ export function extractGoogleAdCreativeAndSignature(
  * @return {string}
  */
 function buildAdUrl(
-    a4a, baseUrl, startTime, slotNumber, queryParams, unboundedQueryParams,
+    a4a, baseUrl, startTime, queryParams, unboundedQueryParams,
     clientId, referrer) {
+  const slotId = a4a.element.getAttribute('data-amp-slot-index');
+  const slotNumber = Number(slotId);
   const global = a4a.win;
   const documentInfo = documentInfoForDoc(a4a.element);
   if (!global.gaGlobal) {
@@ -177,33 +177,6 @@ function buildAdUrl(
   dtdParam.value = elapsedTimeWithCeiling(Date.now(), startTime);
   return buildUrl(
       baseUrl, allQueryParams, MAX_URL_LENGTH, {name: 'trunc', value: '1'});
-}
-
-/**
- * @param {!Window} win
- * @return {!GoogleAdSlotCounter}
- */
-export function getGoogleAdSlotCounter(win) {
-  if (!win.AMP_GOOGLE_AD_SLOT_COUNTER) {
-    win.AMP_GOOGLE_AD_SLOT_COUNTER = new GoogleAdSlotCounter();
-  }
-  return win.AMP_GOOGLE_AD_SLOT_COUNTER;
-}
-
-class GoogleAdSlotCounter {
-
-  constructor() {
-    /** @private {number} */
-    this.nextSlotNumber_ = 0;
-  }
-
-  /**
-   * @return {number}
-   */
-  nextSlotNumber() {
-    return ++this.nextSlotNumber_;
-  }
-
 }
 
 /**

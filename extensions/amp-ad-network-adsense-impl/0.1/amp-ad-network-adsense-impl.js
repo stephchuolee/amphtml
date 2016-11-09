@@ -28,7 +28,6 @@ import {
   extractGoogleAdCreativeAndSignature,
   googleAdUrl,
   isGoogleAdsA4AValidEnvironment,
-  getCorrelator,
 } from '../../../ads/google/a4a/utils';
 import {getLifecycleReporter} from '../../../ads/google/a4a/performance';
 import {documentStateFor} from '../../../src/document-state';
@@ -70,15 +69,11 @@ export class AmpAdNetworkAdsenseImpl extends AmpA4A {
   getAdUrl() {
     const startTime = Date.now();
     const global = this.win;
-    const slotId = this.element.getAttribute('data-amp-slot-index');
-    const slotIdNumber = Number(slotId);
-    const correlator = getCorrelator(this.win, slotId);
-    const screen = global.screen;
     const slotRect = this.getIntersectionElementLayoutBox();
     const visibilityState = documentStateFor(global).getVisibilityState();
     const adTestOn = this.element.getAttribute('data-adtest') ||
         isInManualExperiment(this.element);
-    return googleAdUrl(this, ADSENSE_BASE_URL, startTime, slotIdNumber, [
+    return googleAdUrl(this, ADSENSE_BASE_URL, startTime, [
       {name: 'client', value: this.element.getAttribute('data-ad-client')},
       {name: 'format', value: `${slotRect.width}x${slotRect.height}`},
       {name: 'w', value: slotRect.width},
@@ -91,8 +86,6 @@ export class AmpAdNetworkAdsenseImpl extends AmpA4A {
       },
       {name: 'ctypes', value: this.getCtypes_()},
       {name: 'host', value: this.element.getAttribute('data-ad-host')},
-      {name: 'ifi', value: slotIdNumber},
-      {name: 'c', value: correlator},
       {name: 'to', value: this.element.getAttribute('data-tag-origin')},
       {name: 'channel', value: this.element.getAttribute('data-ad-channel')},
       {name: 'vis', value: visibilityStateCodes[visibilityState] || '0'},
