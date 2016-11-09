@@ -179,7 +179,7 @@ export class AmpA4A extends AMP.BaseElement {
     /** @private {?ArrayBuffer} */
     this.creativeBody_ = null;
     /** @private {!CROSS_ORIGIN_RENDERING_MODE} */
-    this.experimentalNonAmpCreativeRenderMethod_ =
+    this.nonAmpCreativeRenderMethod_ =
         CROSS_ORIGIN_RENDERING_MODE.CLIENT_CACHE;
 
     this.emitLifecycleEvent('adSlotBuilt');
@@ -349,7 +349,7 @@ export class AmpA4A extends AMP.BaseElement {
           // an acceptable solution to the 'Safari on iOS doesn't fetch
           // iframe src from cache' issue.  See
           // https://github.com/ampproject/amphtml/issues/5614
-          this.experimentalNonAmpCreativeRenderMethod_ =
+          this.nonAmpCreativeRenderMethod_ =
               fetchResponse.headers.get(RENDERING_TYPE_HEADER);
           // Note: Resolving a .then inside a .then because we need to capture
           // two fields of fetchResponse, one of which is, itself, a promise,
@@ -390,7 +390,7 @@ export class AmpA4A extends AMP.BaseElement {
           // src cache issue.  If we decide to keep a SafeFrame-like solution,
           // we should restructure the promise chain to pass this info along
           // more cleanly, without use of an object variable outside the chain.
-          if (this.experimentalNonAmpCreativeRenderMethod_ !=
+          if (this.nonAmpCreativeRenderMethod_ !=
               CROSS_ORIGIN_RENDERING_MODE.CLIENT_CACHE &&
               creativeParts &&
               creativeParts.creative) {
@@ -530,10 +530,10 @@ export class AmpA4A extends AMP.BaseElement {
         // Haven't rendered yet, so try rendering via one of our
         // cross-domain iframe solutions.
         let renderPromise;
-        if (this.experimentalNonAmpCreativeRenderMethod_ ==
+        if (this.nonAmpCreativeRenderMethod_ ==
             CROSS_ORIGIN_RENDERING_MODE.SAFEFRAME && this.creativeBody_) {
           renderPromise = this.renderViaSafeFrame_(this.creativeBody_);
-        } else if (this.experimentalNonAmpCreativeRenderMethod_ ==
+        } else if (this.nonAmpCreativeRenderMethod_ ==
             CROSS_ORIGIN_RENDERING_MODE.NAMEFRAME && this.creativeBody_) {
           renderPromise = this.renderViaNameFrame_(this.creativeBody_);
         } else if (this.adUrl_) {
@@ -543,7 +543,7 @@ export class AmpA4A extends AMP.BaseElement {
               ' any ad');
         }
         this.creativeBody_ = null;  // Free resources.
-        this.experimentalNonAmpCreativeRenderMethod_ =
+        this.nonAmpCreativeRenderMethod_ =
             CROSS_ORIGIN_RENDERING_MODE.CLIENT_CACHE;
         return renderPromise;
       }
@@ -568,7 +568,7 @@ export class AmpA4A extends AMP.BaseElement {
       this.adPromise_ = null;
       this.adUrl_ = null;
       this.creativeBody_ = null;
-      this.experimentalNonAmpCreativeRenderMethod_ = null;
+      this.nonAmpCreativeRenderMethod_ = null;
       this.rendered_ = false;
       if (this.xOriginIframeHandler_) {
         this.xOriginIframeHandler_.freeXOriginIframe();
